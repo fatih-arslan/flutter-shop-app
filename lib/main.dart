@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 
+import 'helpers/custom_route.dart';
 import 'screens/cart_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/product_detail_screen.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, Products>(
             create: (ctx) => Products(null, null, []),
             update: (ctx, auth, previousProducts) => Products(
-                auth.token == null ? null : auth.token as String,
+                auth.token,
                 auth.userId,
                 previousProducts == null ? [] : previousProducts.items)),
         ChangeNotifierProvider.value(value: Cart()),
@@ -51,7 +52,11 @@ class MyApp extends StatelessWidget {
                 colorScheme:
                     ColorScheme.fromSwatch(primarySwatch: Colors.purple)
                         .copyWith(secondary: Colors.deepOrange),
-                fontFamily: 'Lato'),
+                fontFamily: 'Lato',
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder()
+                })),
             home: auth.isAuth
                 ? const ProductsOverviewScreen()
                 : FutureBuilder(
